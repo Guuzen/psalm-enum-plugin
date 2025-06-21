@@ -1,0 +1,9 @@
+services:
+  php:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    entrypoint: tail -f /dev/null
+    working_dir: /app

@@ -1,0 +1,38 @@
+{
+    "name": "guuzen/psalm-enum-plugin",
+    "description": "Reports attempts to create enum with a wrong case",
+    "version": "1.0.0",
+    "type": "psalm-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Guuzen"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "vimeo/psalm": "^6"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "psalm/plugin-phpunit": "^0.19.0"
+    },
+    "extra": {
+        "psalm": {
+            "pluginClass": "Guuzen\\PsalmEnumPlugin\\Plugin"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Guuzen\\PsalmEnumPlugin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Guuzen\\PsalmEnumPlugin\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "psalm": "vendor/bin/psalm --no-cache"
+    }
+}
