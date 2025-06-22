@@ -30,11 +30,15 @@ before running your code
 
 [Psalm documentation](https://psalm.dev/docs/running_psalm/plugins/using_plugins/#installing-plugins)
 
-`composer require --dev guuzen/psalm-enum-plugin`
+```
+composer require --dev guuzen/psalm-enum-plugin
+```
 
 It needs to be enabled by either using psalm-plugin tool:
 
-`vendor/bin/psalm-plugin enable guuzen/psalm-enum-plugin`
+```
+vendor/bin/psalm-plugin enable guuzen/psalm-enum-plugin
+```
 
 or by manually adding to your psalm.xml
 ```xml
