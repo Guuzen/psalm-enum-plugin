@@ -39,4 +39,10 @@ enum IntEnum: int
          */
         \Guuzen\PsalmEnumPlugin\Tests\IntEnum::from($value);
     }
+
+    public static function nonLiteralInt(int $value): void
+    {
+        // non-literal ints are allowed for now
+        self::from($value);
+    }
 }

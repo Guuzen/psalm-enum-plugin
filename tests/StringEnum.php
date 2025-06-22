@@ -39,4 +39,10 @@ enum StringEnum: string
          */
         \Guuzen\PsalmEnumPlugin\Tests\StringEnum::from($value);
     }
+
+    public static function nonLiteralString(string $value): void
+    {
+        // non-literal strings are allowed for now
+        self::from($value);
+    }
 }

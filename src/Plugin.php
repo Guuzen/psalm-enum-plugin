@@ -16,6 +16,7 @@ use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Atomic\TLiteralString;
+use Psalm\Type\Atomic\TString;
 
 final class Plugin implements PluginEntryPointInterface, AfterMethodCallAnalysisInterface
 {
@@ -48,6 +49,25 @@ final class Plugin implements PluginEntryPointInterface, AfterMethodCallAnalysis
             return;
         }
 
+        $calledClass = (string)$expr->class;
+
+        if ($calledClass === 'self') {
+            $enumClass = $event->getContext()->self;
+        } else {
+            /**
+             * @psalm-suppress InternalClass
+             * @psalm-suppress InternalMethod
+             */
+            $enumClass = ClassLikeAnalyzer::getFQCLNFromNameObject(
+                $expr->class,
+                $event->getStatementsSource()->getAliases(),
+            );
+        }
+
+        if ($enumClass === null || !is_a($enumClass, \BackedEnum::class, true)) {
+            return;
+        }
+
         $argType = $event->getStatementsSource()->getNodeTypeProvider()->getType($firstArg->value);
 
         if (!$argType) {
@@ -56,25 +76,6 @@ final class Plugin implements PluginEntryPointInterface, AfterMethodCallAnalysis
 
         foreach ($argType->getAtomicTypes() as $type) {
             if (!$type instanceof TLiteralString && !$type instanceof TLiteralInt) {
-                return;
-            }
-
-            $calledClass = (string)$expr->class;
-
-            if ($calledClass === 'self') {
-                $enumClass = $event->getContext()->self;
-            } else {
-                /**
-                 * @psalm-suppress InternalClass
-                 * @psalm-suppress InternalMethod
-                 */
-                $enumClass = ClassLikeAnalyzer::getFQCLNFromNameObject(
-                    $expr->class,
-                    $event->getStatementsSource()->getAliases(),
-                );
-            }
-
-            if ($enumClass === null || !is_a($enumClass, \BackedEnum::class, true)) {
                 return;
             }
 
