@@ -1,7 +1,6 @@
 {
     "name": "guuzen/psalm-enum-plugin",
     "description": "Reports attempts to create enum with a wrong case",
-    "version": "1.0.0",
     "type": "psalm-plugin",
     "license": "MIT",
     "authors": [
