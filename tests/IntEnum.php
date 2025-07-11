@@ -42,7 +42,9 @@ enum IntEnum: int
 
     public static function nonLiteralInt(int $value): void
     {
-        // non-literal ints are allowed for now
+        /**
+         * @psalm-suppress LessSpecificEnumValue
+         */
         self::from($value);
     }
 }

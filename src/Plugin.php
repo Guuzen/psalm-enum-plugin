@@ -14,6 +14,7 @@ use Psalm\Plugin\EventHandler\AfterMethodCallAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
+use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TString;
@@ -75,23 +76,35 @@ final class Plugin implements PluginEntryPointInterface, AfterMethodCallAnalysis
         }
 
         foreach ($argType->getAtomicTypes() as $type) {
-            if (!$type instanceof TLiteralString && !$type instanceof TLiteralInt) {
+            if ($type instanceof TLiteralString || $type instanceof TLiteralInt) {
+                $values = array_map(
+                    fn (\BackedEnum $case) => $case->value,
+                    $enumClass::cases(),
+                );
+
+                if (!in_array($type->value, $values, true)) {
+                    IssueBuffer::accepts(
+                        e: new InvalidEnumValue(
+                            message: "Invalid value '{$type->value}' passed to {$enumClass}::from()",
+                            code_location: new CodeLocation($event->getStatementsSource(), $expr),
+                        ),
+                        suppressed_issues: $event->getStatementsSource()->getSuppressedIssues(),
+                    );
+                }
+
                 return;
             }
 
-            $values = array_map(
-                fn (\BackedEnum $case) => $case->value,
-                $enumClass::cases(),
-            );
-
-            if (!in_array($type->value, $values, true)) {
+            if ($type instanceof TString || $type instanceof TInt) {
                 IssueBuffer::accepts(
-                    e: new InvalidEnumValue(
-                        message: "Invalid value '{$type->value}' passed to {$enumClass}::from()",
+                    e: new LessSpecificEnumValue(
+                        message: "Less specific value of type '{$type->getKey()}' passed to {$enumClass}::from()",
                         code_location: new CodeLocation($event->getStatementsSource(), $expr),
                     ),
                     suppressed_issues: $event->getStatementsSource()->getSuppressedIssues(),
                 );
+
+                return;
             }
         }
     }

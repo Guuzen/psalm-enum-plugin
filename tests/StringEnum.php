@@ -42,7 +42,9 @@ enum StringEnum: string
 
     public static function nonLiteralString(string $value): void
     {
-        // non-literal strings are allowed for now
+        /**
+         * @psalm-suppress LessSpecificEnumValue
+         */
         self::from($value);
     }
 }
